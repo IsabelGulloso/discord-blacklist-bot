@@ -2,9 +2,8 @@ import discord
 import requests
 import asyncio
 import csv
-from io import StringIO
-
 import os
+from io import StringIO
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL_ID = 1482348854518091911
@@ -15,20 +14,18 @@ intents = discord.Intents.default()
 client = discord.Client(intents=intents)
 
 async def actualizar():
-
     await client.wait_until_ready()
     channel = await client.fetch_channel(CHANNEL_ID)
     message = await channel.fetch_message(MESSAGE_ID)
 
     while True:
-
-try:
-    r = requests.get(SHEET_URL)
-    data = list(csv.reader(StringIO(r.text)))
-except:
-    print("Error leyendo Google Sheets")
-    await asyncio.sleep(60)
-    continue
+        try:
+            r = requests.get(SHEET_URL)
+            data = list(csv.reader(StringIO(r.text)))
+        except:
+            print("Error leyendo Google Sheets")
+            await asyncio.sleep(60)
+            continue
 
         texto = "📋 **Lista Actualizada**\n\n"
 
@@ -37,7 +34,8 @@ except:
 
         await message.edit(content=texto)
 
-        await asyncio.sleep(300)
+        # actualizar cada 24 horas
+        await asyncio.sleep(86400)
 
 @client.event
 async def on_ready():
